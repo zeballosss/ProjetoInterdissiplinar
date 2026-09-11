@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home - Copa do Mundo</title>
+</head>
+<body>
+    <h1>Bem-vindo ao álbum da Copa do Mundo</h1>
+    <p>Seu sistema já está autenticado com segurança.</p>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Sair</button>
+    </form>
+</body>
+</html>
