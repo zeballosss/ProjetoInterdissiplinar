@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,6 +50,42 @@ public class CopaApiController {
         return copaRepository.findById(id).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+        @GetMapping("/copas/{id}/detalhes")
+        @Transactional(readOnly = true)
+        public ResponseEntity<CopaDetalhesResponse> detalhesDaCopa(@PathVariable Long id) {
+        return copaRepository.findById(id)
+            .map(copa -> {
+                List<SelecaoDetalhesResponse> selecoes = copa.getSelecoes().stream()
+                    .map(selecao -> new SelecaoDetalhesResponse(
+                        selecao.getIdSelecao(), selecao.getNomeSelecao(), selecao.getPais(),
+                        selecao.getGrupo(), jogadorRepository
+                            .findBySelecaoIdSelecaoOrderByGolsDescNomeJogadorAsc(selecao.getIdSelecao())
+                            .stream()
+                            .map(jogador -> new JogadorResumoResponse(
+                                jogador.getIdJogador(), jogador.getNomeJogador(),
+                                jogador.getNumeroCamisa(), jogador.getPosicao(),
+                                jogador.getGols(), jogador.getAssistencias()))
+                            .toList()))
+                    .toList();
+                return ResponseEntity.ok(new CopaDetalhesResponse(
+                    copa.getIdCopa(), copa.getNome(), copa.getAno(), copa.getSede(), selecoes));
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
+        }
+
+        @PostMapping("/copas/{copaId}/selecoes/{selecaoId}")
+        @Transactional
+        public ResponseEntity<Void> associarSelecao(@PathVariable Long copaId, @PathVariable Long selecaoId) {
+        var copa = copaRepository.findById(copaId);
+        var selecao = selecaoRepository.findById(selecaoId);
+        if (copa.isEmpty() || selecao.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        copa.get().getSelecoes().add(selecao.get());
+        copaRepository.save(copa.get());
+        return ResponseEntity.noContent().build();
+        }
 
     @GetMapping("/selecoes")
     public List<Selecao> listarSelecoes() {
@@ -104,5 +141,17 @@ public class CopaApiController {
         }
         jogadorRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    public record CopaDetalhesResponse(Long idCopa, String nome, Integer ano, String sede,
+                                       List<SelecaoDetalhesResponse> selecoes) {
+    }
+
+    public record SelecaoDetalhesResponse(Long idSelecao, String nome, String pais, String grupo,
+                                          List<JogadorResumoResponse> jogadores) {
+    }
+
+    public record JogadorResumoResponse(Long idJogador, String nome, Integer numeroCamisa,
+                                        String posicao, Integer gols, Integer assistencias) {
     }
 }

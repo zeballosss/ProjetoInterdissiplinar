@@ -14,7 +14,96 @@
                 <button type="submit" class="btn btn-outline-secondary">Sair</button>
             </form>
         </div>
-        <div class="alert alert-success">Você está autenticado com sucesso.</div>
+        <section class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <label for="copaSelect" class="form-label fw-semibold">Escolha uma Copa</label>
+                <select id="copaSelect" class="form-select">
+                    <option value="">Carregando copas...</option>
+                </select>
+            </div>
+        </section>
+
+        <div id="mensagem" class="alert alert-info">Selecione uma Copa para ver seus dados.</div>
+        <section id="detalhes" class="d-none">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <h2 id="copaNome" class="h4"></h2>
+                    <p id="copaResumo" class="text-body-secondary mb-0"></p>
+                </div>
+            </div>
+            <div id="selecoes" class="row g-4"></div>
+        </section>
     </main>
+    <script>
+        const copaSelect = document.getElementById('copaSelect');
+        const mensagem = document.getElementById('mensagem');
+        const detalhes = document.getElementById('detalhes');
+        const selecoes = document.getElementById('selecoes');
+
+        async function carregarCopas() {
+            const resposta = await fetch('/api/copas');
+            if (!resposta.ok) throw new Error('Não foi possível carregar as copas.');
+            const copas = await resposta.json();
+            copaSelect.innerHTML = '<option value="">Selecione uma Copa</option>';
+            copas.forEach(copa => {
+                copaSelect.insertAdjacentHTML('beforeend',
+                    `<option value="${copa.idCopa}">${copa.nome} (${copa.ano})</option>`);
+            });
+            if (!copas.length) mostrarMensagem('Nenhuma Copa cadastrada.', 'warning');
+        }
+
+        async function carregarDetalhes(id) {
+            if (!id) {
+                detalhes.classList.add('d-none');
+                mostrarMensagem('Selecione uma Copa para ver seus dados.', 'info');
+                return;
+            }
+            mostrarMensagem('Carregando informações...', 'info');
+            const resposta = await fetch(`/api/copas/${id}/detalhes`);
+            if (!resposta.ok) throw new Error('Não foi possível carregar os detalhes.');
+            const copa = await resposta.json();
+            document.getElementById('copaNome').textContent = `${copa.nome} (${copa.ano})`;
+            document.getElementById('copaResumo').textContent = copa.sede
+                ? `Sede: ${copa.sede}` : 'Sede não informada';
+            selecoes.innerHTML = copa.selecoes.map(selecao => `
+                <div class="col-12 col-xl-6">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <h3 class="h5">${selecao.nome} <small class="text-body-secondary">${selecao.pais}</small></h3>
+                            <p class="text-body-secondary">Grupo ${selecao.grupo}</p>
+                            ${tabelaJogadores(selecao.jogadores)}
+                        </div>
+                    </div>
+                </div>`).join('');
+            detalhes.classList.remove('d-none');
+            mensagem.classList.add('d-none');
+            if (!copa.selecoes.length) {
+                detalhes.classList.add('d-none');
+                mostrarMensagem('Esta Copa ainda não possui seleções associadas.', 'warning');
+            }
+        }
+
+        function tabelaJogadores(jogadores) {
+            if (!jogadores.length) return '<p class="mb-0 text-body-secondary">Nenhum jogador cadastrado.</p>';
+            return `<div class="table-responsive"><table class="table table-sm align-middle mb-0">
+                <thead><tr><th>Jogador</th><th>Posição</th><th>Gols</th><th>Assist.</th></tr></thead>
+                <tbody>${jogadores.map(jogador => `<tr>
+                    <td>${jogador.numeroCamisa} - ${jogador.nome}</td><td>${jogador.posicao}</td>
+                    <td><span class="badge text-bg-success">${jogador.gols}</span></td><td>${jogador.assistencias}</td>
+                </tr>`).join('')}</tbody></table></div>`;
+        }
+
+        function mostrarMensagem(texto, tipo) {
+            mensagem.textContent = texto;
+            mensagem.className = `alert alert-${tipo}`;
+        }
+
+        copaSelect.addEventListener('change', () => carregarDetalhes(copaSelect.value)
+            .catch(erro => mostrarMensagem(erro.message, 'danger')));
+        carregarCopas().catch(erro => {
+            copaSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+            mostrarMensagem(erro.message, 'danger');
+        });
+    </script>
 </body>
 </html>

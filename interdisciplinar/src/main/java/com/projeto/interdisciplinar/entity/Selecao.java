@@ -1,9 +1,13 @@
 package com.projeto.interdisciplinar.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "selecoes")
@@ -28,4 +32,8 @@ public class Selecao {
     @NotBlank(message = "O grupo é obrigatório")
     @Column(nullable = false)
     private String grupo;
+
+    @ManyToMany(mappedBy = "selecoes")
+    @JsonIgnore
+    private Set<Copa> copas = new LinkedHashSet<>();
 }
