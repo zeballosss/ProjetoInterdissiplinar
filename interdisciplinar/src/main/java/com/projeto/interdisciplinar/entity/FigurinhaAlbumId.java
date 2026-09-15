@@ -1,4 +1,4 @@
-package com.projeto.interdisciplinar.model;
+package com.projeto.interdisciplinar.entity;
 
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;

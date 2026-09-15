@@ -1,6 +1,6 @@
 package com.projeto.interdisciplinar.controller;
 
-import com.projeto.interdisciplinar.model.Usuario;
+import com.projeto.interdisciplinar.entity.Usuario;
 import com.projeto.interdisciplinar.repository.UsuarioRepository;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -1,6 +1,6 @@
 package com.projeto.interdisciplinar.repository;
 
-import com.projeto.interdisciplinar.model.Usuario;
+import com.projeto.interdisciplinar.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

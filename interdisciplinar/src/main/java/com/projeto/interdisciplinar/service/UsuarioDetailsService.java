@@ -1,6 +1,6 @@
 package com.projeto.interdisciplinar.service;
 
-import com.projeto.interdisciplinar.model.Usuario;
+import com.projeto.interdisciplinar.entity.Usuario;
 import com.projeto.interdisciplinar.repository.UsuarioRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

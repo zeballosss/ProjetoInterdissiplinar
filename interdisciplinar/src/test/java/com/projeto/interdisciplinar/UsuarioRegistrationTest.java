@@ -1,6 +1,6 @@
 package com.projeto.interdisciplinar;
 
-import com.projeto.interdisciplinar.model.Usuario;
+import com.projeto.interdisciplinar.entity.Usuario;
 import com.projeto.interdisciplinar.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
