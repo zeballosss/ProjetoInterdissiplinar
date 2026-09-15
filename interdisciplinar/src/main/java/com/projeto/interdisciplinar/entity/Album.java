@@ -15,7 +15,8 @@ import java.time.LocalDate;
 public class Album {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "album_seq", sequenceName = "albums_id_album_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "album_seq")
     @Column(name = "id_album")
     private Long idAlbum;
 
