@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Painel administrativo')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+<main class="container py-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+        <div>
+            <span class="eyebrow text-verde">ÁREA RESTRITA</span>
+            <h1 class="fw-bold mb-1">Gerenciar jogadores</h1>
+            <p class="text-secondary mb-0">Cadastre, edite ou remova jogadores da enciclopédia.</p>
+        </div>
+        <a th:href="@{/admin/jogadores/novo}" class="btn btn-copa">+ Cadastrar jogador</a>
+    </div>
+    <div class="table-responsive card border-0 shadow-sm rounded-4">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr><th>Foto</th><th>Nome</th><th>Seleção</th><th>Posição</th><th class="text-end">Ações</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="jogador : ${jogadores}">
+                    <td>
+                        <img th:if="${jogador.imagemUrl != null and !jogador.imagemUrl.isBlank()}"
+                             th:src="${jogador.imagemUrl}" th:alt="${jogador.nome}"
+                             class="foto-miniatura" onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
+                        <span class="foto-miniatura-inicial" th:classappend="${jogador.imagemUrl != null and !jogador.imagemUrl.isBlank()} ? ' d-none' : ''"
+                              th:text="${#strings.substring(jogador.nome, 0, 1)}">J</span>
+                    </td>
+                    <td class="fw-semibold" th:text="${jogador.nome}">Nome</td>
+                    <td th:text="${jogador.selecao}">Seleção</td>
+                    <td th:text="${jogador.posicao}">Posição</td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-dark" th:href="@{/admin/jogadores/{id}/editar(id=${jogador.id})}">Editar</a>
+                        <form class="d-inline" th:action="@{/admin/jogadores/{id}/excluir(id=${jogador.id})}" method="post"
+                              onsubmit="return confirm('Deseja realmente excluir este jogador? As avaliações e os favoritos dele também serão removidos.');">
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${jogadores.isEmpty()}"><td colspan="5" class="text-center text-secondary py-4">Nenhum jogador cadastrado.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

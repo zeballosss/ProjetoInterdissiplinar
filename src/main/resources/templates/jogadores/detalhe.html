@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Perfil do jogador')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+<main class="container py-5">
+    <a th:href="@{/jogadores}" class="link-voltar">← Voltar para os jogadores</a>
+    <div class="row g-4 g-lg-5 mt-1 align-items-start">
+        <div class="col-lg-4">
+            <div class="perfil-visual">
+                <img th:if="${jogador.imagemUrl != null and !jogador.imagemUrl.isBlank()}" th:src="${jogador.imagemUrl}" th:alt="${jogador.nome}" class="perfil-imagem"
+                     onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
+                <div class="perfil-inicial" th:classappend="${jogador.imagemUrl != null and !jogador.imagemUrl.isBlank()} ? ' d-none' : ''" th:text="${#strings.substring(jogador.nome, 0, 1)}">J</div>
+                <div class="perfil-visual-info">
+                    <span class="eyebrow">PERFIL DO JOGADOR</span>
+                    <div class="h3 fw-bold mb-0" th:text="${jogador.nome}">Jogador</div>
+                    <div class="text-white-50" th:text="${jogador.selecao}">Seleção</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                <div>
+                    <span class="eyebrow text-verde" th:text="${jogador.selecao}">Seleção</span>
+                    <h1 class="display-6 fw-bold mb-2" th:text="${jogador.nome}">Nome</h1>
+                    <p class="text-secondary mb-0" th:text="${jogador.posicao}">Posição</p>
+                </div>
+                <span class="badge badge-numero" th:if="${jogador.numeroCamisa != null}" th:text="${'Camisa ' + jogador.numeroCamisa}">Camisa 10</span>
+            </div>
+
+            <div class="row g-3 my-4">
+                <div class="col-sm-6">
+                    <div class="info-box"><span class="small text-secondary">Clube</span><strong th:text="${jogador.clube != null ? jogador.clube : 'Não informado'}">Não informado</strong></div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="info-box"><span class="small text-secondary">Avaliação da comunidade</span>
+                        <strong><span th:text="${media == null ? 'Sem notas' : #numbers.formatDecimal(media, 1, 1) + ' / 5'}">4,5 / 5</span>
+                            <span class="small text-secondary fw-normal" th:text="${'(' + quantidadeAvaliacoes + ')'}">(0)</span>
+                        </strong>
+                    </div>
+                </div>
+            </div>
+
+            <section class="mb-4">
+                <h2 class="h5 fw-bold">Sobre o jogador</h2>
+                <p class="text-secondary lh-lg" th:text="${jogador.biografia != null and !jogador.biografia.isBlank() ? jogador.biografia : 'Ainda nao ha uma biografia cadastrada para este jogador.'}">Biografia do jogador.</p>
+            </section>
+
+            <div sec:authorize="isAuthenticated()" class="interaction-panel p-3 p-md-4 rounded-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+                    <div>
+                        <h2 class="h5 fw-bold mb-1">Sua opinião</h2>
+                        <p class="small text-secondary mb-0">Ajude outros visitantes avaliando este jogador.</p>
+                    </div>
+                    <form th:action="@{/interacoes/jogadores/{id}/favoritar(id=${jogador.id})}" method="post">
+                        <button class="btn" th:classappend="${favoritado} ? 'btn-outline-danger' : 'btn-outline-success'" type="submit"
+                                th:text="${favoritado} ? '♥ Remover dos favoritos' : '♡ Adicionar aos favoritos'">Adicionar aos favoritos</button>
+                    </form>
+                </div>
+                <hr>
+                <form th:action="@{/interacoes/jogadores/{id}/avaliar(id=${jogador.id})}" method="post">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-sm-4">
+                            <label for="nota" class="form-label fw-semibold">Sua nota (1 a 5)</label>
+                            <select class="form-select" id="nota" name="nota" required>
+                                <option value="5" th:selected="${minhaAvaliacao == null or minhaAvaliacao.nota == 5}">5 - Excelente</option>
+                                <option value="4" th:selected="${minhaAvaliacao != null and minhaAvaliacao.nota == 4}">4 - Muito bom</option>
+                                <option value="3" th:selected="${minhaAvaliacao != null and minhaAvaliacao.nota == 3}">3 - Bom</option>
+                                <option value="2" th:selected="${minhaAvaliacao != null and minhaAvaliacao.nota == 2}">2 - Regular</option>
+                                <option value="1" th:selected="${minhaAvaliacao != null and minhaAvaliacao.nota == 1}">1 - Precisa melhorar</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-8">
+                            <label for="comentario" class="form-label fw-semibold">Comentário (opcional)</label>
+                            <input class="form-control" id="comentario" name="comentario" maxlength="500"
+                                   th:value="${minhaAvaliacao != null ? minhaAvaliacao.comentario : ''}" placeholder="Escreva o que pensa sobre o jogador">
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-copa" type="submit" th:text="${minhaAvaliacao == null ? 'Enviar avaliação' : 'Atualizar avaliação'}">Enviar avaliação</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div sec:authorize="isAnonymous()" class="alert alert-light border mt-4">
+                <a th:href="@{/login}">Entre na sua conta</a> para favoritar e avaliar este jogador.
+            </div>
+            <section class="mt-4">
+                <h2 class="h5 fw-bold mb-3">Opiniões da comunidade</h2>
+                <div th:if="${avaliacoes.isEmpty()}" class="text-secondary small">Este jogador ainda não recebeu avaliações.</div>
+                <article th:each="avaliacao : ${avaliacoes}" class="card border-0 shadow-sm rounded-3 mb-2">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                            <strong th:text="${avaliacao.usuario.nome}">Nome do usuário</strong>
+                            <span class="badge text-bg-success" th:text="${avaliacao.nota + ' / 5'}">5 / 5</span>
+                        </div>
+                        <p class="text-secondary mb-0 mt-2" th:text="${avaliacao.comentario != null and !avaliacao.comentario.isBlank() ? avaliacao.comentario : 'Sem comentário.'}">Comentário</p>
+                    </div>
+                </article>
+            </section>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

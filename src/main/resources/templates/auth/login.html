@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Entrar')}"></head>
+<body class="pagina-auth">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container py-5">
+    <div class="auth-card mx-auto">
+        <div class="text-center mb-4">
+            <span class="eyebrow text-verde">BEM-VINDO DE VOLTA</span>
+            <h1 class="h2 fw-bold mt-2">Entrar na conta</h1>
+            <p class="text-secondary">Acesse seus favoritos e avaliações.</p>
+        </div>
+        <div class="alert alert-success" th:if="${sucesso}" th:text="${sucesso}">Cadastro concluído.</div>
+        <div class="alert alert-danger" th:if="${param.error}">E-mail ou senha incorretos.</div>
+        <form th:action="@{/login}" method="post">
+            <div class="mb-3">
+                <label for="email" class="form-label fw-semibold">E-mail</label>
+                <input class="form-control form-control-lg" id="email" name="email" type="email" autocomplete="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="senha" class="form-label fw-semibold">Senha</label>
+                <input class="form-control form-control-lg" id="senha" name="senha" type="password" autocomplete="current-password" required>
+            </div>
+            <button type="submit" class="btn btn-copa btn-lg w-100 mt-2">Entrar</button>
+        </form>
+        <p class="text-center text-secondary mt-4 mb-0">Ainda não tem conta? <a th:href="@{/cadastro}">Cadastre-se</a>.</p>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

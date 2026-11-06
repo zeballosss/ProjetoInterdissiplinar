@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${titulo})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container py-5">
+    <a th:href="@{/admin/jogadores}" class="link-voltar">← Voltar ao painel</a>
+    <div class="form-admin-card mt-3">
+        <span class="eyebrow text-verde">ÁREA ADMINISTRATIVA</span>
+        <h1 class="h2 fw-bold mt-2" th:text="${titulo}">Cadastrar jogador</h1>
+        <p class="text-secondary">Preencha as informações principais do jogador.</p>
+
+        <form th:action="@{/admin/jogadores/salvar}" th:object="${jogador}"
+              method="post" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{imagemUrl}">
+
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <label class="form-label fw-semibold" for="nome">Nome *</label>
+                    <input class="form-control" id="nome" th:field="*{nome}" maxlength="100" required>
+                    <div class="text-danger small" th:errors="*{nome}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold" for="numeroCamisa">Número da camisa</label>
+                    <input class="form-control" id="numeroCamisa" type="number" min="1" max="99" th:field="*{numeroCamisa}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold" for="selecao">Seleção *</label>
+                    <input class="form-control" id="selecao" th:field="*{selecao}" maxlength="80" placeholder="Ex.: Brasil" required>
+                    <div class="text-danger small" th:errors="*{selecao}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold" for="posicao">Posição *</label>
+                    <select class="form-select" id="posicao" th:field="*{posicao}" required>
+                        <option value="">Selecione</option>
+                        <option value="Goleiro">Goleiro</option>
+                        <option value="Defensor">Defensor</option>
+                        <option value="Meio-campista">Meio-campista</option>
+                        <option value="Atacante">Atacante</option>
+                        <option value="Outra">Outra</option>
+                    </select>
+                    <div class="text-danger small" th:errors="*{posicao}"></div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold" for="clube">Clube atual (opcional)</label>
+                    <input class="form-control" id="clube" th:field="*{clube}" maxlength="100">
+                    <div class="text-danger small" th:errors="*{clube}"></div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold" for="biografia">Biografia</label>
+                    <textarea class="form-control" id="biografia" th:field="*{biografia}" rows="4" maxlength="1200" placeholder="Conte um pouco sobre o jogador..."></textarea>
+                    <div class="text-danger small" th:errors="*{biografia}"></div>
+                </div>
+
+                <div class="col-12">
+                    <hr class="my-2">
+                    <h2 class="h5 fw-bold mb-1">Foto do jogador</h2>
+                    <p class="text-secondary small mb-3">Escolha uma foto do computador ou informe um endereço de imagem. O arquivo enviado será salvo na pasta <code>uploads/jogadores</code> do projeto.</p>
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-4">
+                            <div class="foto-preview-admin">
+                                <img id="previewFoto"
+                                     th:src="${jogador.imagemUrl != null and !jogador.imagemUrl.isBlank() ? jogador.imagemUrl : '/images/foto-padrao.svg'}"
+                                     th:alt="${'Foto de ' + jogador.nome}"
+                                     th:classappend="${jogador.imagemUrl == null or jogador.imagemUrl.isBlank()} ? ' d-none' : ''"
+                                     onerror="this.classList.add('d-none'); document.getElementById('previewSemFoto').classList.remove('d-none');">
+                                <div id="previewSemFoto" class="foto-preview-vazia"
+                                     th:classappend="${jogador.imagemUrl != null and !jogador.imagemUrl.isBlank()} ? ' d-none' : ''">
+                                    <span>⚽</span><small>Prévia da foto</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold" for="arquivoImagem">Enviar foto do computador</label>
+                            <input class="form-control" id="arquivoImagem" name="arquivoImagem" type="file"
+                                   accept="image/jpeg,image/png,image/webp">
+                            <div class="form-text">Formatos aceitos: JPG, PNG e WEBP. Tamanho máximo: 5 MB.</div>
+
+                            <label class="form-label fw-semibold mt-3" for="novaImagemUrl">Ou usar uma URL de imagem</label>
+                            <input class="form-control" id="novaImagemUrl" name="novaImagemUrl" type="url"
+                                   maxlength="500"
+                                   th:value="${imagemUrlDigitada != null ? imagemUrlDigitada : (jogador.imagemUrl != null and !jogador.imagemUrl.startsWith('/uploads/') ? jogador.imagemUrl : '')}"
+                                   placeholder="https://exemplo.com/foto-do-jogador.jpg">
+                            <div class="text-danger small mt-1" th:if="${erroImagem != null}" th:text="${erroImagem}"></div>
+                            <div class="form-check mt-3" th:if="${jogador.imagemUrl != null and !jogador.imagemUrl.isBlank()}">
+                                <input class="form-check-input" type="checkbox" id="removerImagem" name="removerImagem" value="true">
+                                <label class="form-check-label" for="removerImagem">Remover a foto atual</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <button class="btn btn-copa" type="submit">Salvar jogador</button>
+                <a class="btn btn-outline-secondary" th:href="@{/admin/jogadores}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script>
+    const campoArquivo = document.getElementById('arquivoImagem');
+    const campoUrl = document.getElementById('novaImagemUrl');
+    const imagemPreview = document.getElementById('previewFoto');
+    const semFoto = document.getElementById('previewSemFoto');
+
+    function mostrarPrevia(endereco) {
+        if (!endereco) return;
+        if (!imagemPreview) return;
+        imagemPreview.src = endereco;
+        imagemPreview.classList.remove('d-none');
+        semFoto.classList.add('d-none');
+        imagemPreview.onerror = function () {
+            imagemPreview.classList.add('d-none');
+            semFoto.classList.remove('d-none');
+        };
+    }
+
+    campoArquivo.addEventListener('change', function () {
+        if (this.files && this.files[0]) {
+            mostrarPrevia(URL.createObjectURL(this.files[0]));
+        }
+    });
+
+    campoUrl.addEventListener('input', function () {
+        if (this.value.trim()) mostrarPrevia(this.value.trim());
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

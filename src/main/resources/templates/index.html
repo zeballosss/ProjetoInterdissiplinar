@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Início')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<main>
+    <section class="hero-copa">
+        <div class="container py-5">
+            <div class="row align-items-center g-4 py-lg-4">
+                <div class="col-lg-7">
+                    <span class="eyebrow">FUTEBOL · HISTÓRIAS · OPINIÕES</span>
+                    <h1 class="display-4 fw-bold mt-3">Conheça os craques.<br><span class="texto-dourado">Escolha seus favoritos.</span></h1>
+                    <p class="lead text-white-50 mt-3 mb-4">Explore perfis de jogadores, descubra suas seleções e compartilhe sua avaliação.</p>
+                    <form th:action="@{/jogadores}" method="get" class="search-hero d-flex flex-column flex-sm-row gap-2">
+                        <input class="form-control form-control-lg" type="search" name="busca" placeholder="Buscar jogador ou seleção..." aria-label="Buscar jogador ou seleção">
+                        <button class="btn btn-copa btn-lg px-4" type="submit">Pesquisar</button>
+                    </form>
+                    <div class="d-flex flex-wrap gap-4 mt-4 small text-white-50">
+                        <span><strong class="text-white" th:text="${totalJogadores}">10</strong> jogadores cadastrados</span>
+                        <span>Perfis e avaliações da comunidade</span>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-none d-lg-block">
+                    <div class="hero-card">
+                        <div class="hero-ball">⚽</div>
+                        <div class="hero-card-bottom">
+                            <span class="eyebrow">SUA ENCICLOPÉDIA</span>
+                            <h2 class="h3 mb-1">O jogo começa aqui.</h2>
+                            <p class="mb-0 text-white-50">Informação, futebol e participação.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <div class="section-heading d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+            <div>
+                <span class="eyebrow text-verde">ENCICLOPÉDIA</span>
+                <h2 class="fw-bold mb-1">Jogadores em destaque</h2>
+                <p class="text-secondary mb-0">Alguns nomes para começar sua pesquisa.</p>
+            </div>
+            <a class="btn btn-outline-dark" th:href="@{/jogadores}">Ver todos os jogadores <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="row g-4" th:if="${!jogadores.isEmpty()}">
+            <div class="col-sm-6 col-lg-3" th:each="jogador : ${jogadores}">
+                <article class="card jogador-card h-100">
+                    <div class="jogador-card-top">
+                        <img th:if="${jogador.imagemUrl != null and !jogador.imagemUrl.isBlank()}" th:src="${jogador.imagemUrl}" th:alt="${jogador.nome}" class="jogador-imagem"
+                             onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
+                        <div class="jogador-inicial" th:classappend="${jogador.imagemUrl != null and !jogador.imagemUrl.isBlank()} ? ' d-none' : ''" th:text="${#strings.substring(jogador.nome, 0, 1)}">J</div>
+                        <span class="numero-camisa" th:if="${jogador.numeroCamisa != null}" th:text="${'#' + jogador.numeroCamisa}">#10</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="small text-verde fw-semibold" th:text="${jogador.selecao}">Seleção</div>
+                        <h3 class="h5 fw-bold mt-1" th:text="${jogador.nome}">Nome do jogador</h3>
+                        <p class="text-secondary small mb-3" th:text="${jogador.posicao}">Posição</p>
+                        <a class="stretched-link link-copa" th:href="@{/jogadores/{id}(id=${jogador.id})}">Ver perfil <span aria-hidden="true">→</span></a>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <div class="empty-state" th:if="${jogadores.isEmpty()}">
+            <div class="display-5">⚽</div>
+            <h3>Nenhum jogador cadastrado</h3>
+            <p class="text-secondary">Os jogadores cadastrados aparecerão aqui.</p>
+        </div>
+    </section>
+
+    <section class="container pb-5">
+        <div class="cta-faixa rounded-4 p-4 p-md-5 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div>
+                <span class="eyebrow">FAÇA PARTE</span>
+                <h2 class="h3 fw-bold mt-2 mb-1">Sua opinião também entra em campo.</h2>
+                <p class="mb-0 text-white-50">Crie sua conta para favoritar e avaliar jogadores.</p>
+            </div>
+            <a class="btn btn-copa btn-lg" sec:authorize="isAnonymous()" th:href="@{/cadastro}">Criar minha conta</a>
+            <a class="btn btn-copa btn-lg" sec:authorize="isAuthenticated()" th:href="@{/favoritos}">Ver meus favoritos</a>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

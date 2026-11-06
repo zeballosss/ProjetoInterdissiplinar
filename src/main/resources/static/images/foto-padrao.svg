@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e8f3ed"/><stop offset="1" stop-color="#c5ddcf"/></linearGradient></defs>
+<rect width="640" height="640" rx="48" fill="url(#g)"/>
+<circle cx="320" cy="230" r="105" fill="#176b4b" opacity=".9"/>
+<path d="M120 590c15-132 92-205 200-205s185 73 200 205" fill="#176b4b" opacity=".9"/>
+<circle cx="320" cy="230" r="45" fill="#fff" opacity=".9"/>
+<path d="M278 215l42-28 42 28-16 50h-52z" fill="#176b4b"/>
+<text x="320" y="570" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="28" font-weight="700">FOTO DO JOGADOR</text>
+</svg>
