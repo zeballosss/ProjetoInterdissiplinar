@@ -2,17 +2,17 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/layout :: head('Início')}"></head>
 <body>
-<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<nav th:replace="~{fragments/layout :: navbar('inicio')}"></nav>
 <div th:replace="~{fragments/layout :: alerts}"></div>
 
 <main>
     <section class="hero-copa">
         <div class="container py-5">
             <div class="row align-items-center g-4 py-lg-4">
-                <div class="col-lg-7">
-                    <span class="eyebrow">FUTEBOL · HISTÓRIAS · OPINIÕES</span>
-                    <h1 class="display-4 fw-bold mt-3">Conheça os craques.<br><span class="texto-dourado">Escolha seus favoritos.</span></h1>
-                    <p class="lead text-white-50 mt-3 mb-4">Explore perfis de jogadores, descubra suas seleções e compartilhe sua avaliação.</p>
+                <div class="col-lg-10">
+                    <span class="eyebrow text-uppercase">Enciclopédia da Copa</span>
+                    <h1 class="display-5 fw-bold mt-3">Conheça jogadores das Copas do Mundo</h1>
+                    <p class="lead text-white-50 mt-3 mb-4">Pesquise jogadores, veja seus perfis e registre suas avaliações.</p>
                     <form th:action="@{/jogadores}" method="get" class="search-hero d-flex flex-column flex-sm-row gap-2">
                         <input class="form-control form-control-lg" type="search" name="busca" placeholder="Buscar jogador ou seleção..." aria-label="Buscar jogador ou seleção">
                         <button class="btn btn-copa btn-lg px-4" type="submit">Pesquisar</button>
@@ -22,16 +22,7 @@
                         <span>Perfis e avaliações da comunidade</span>
                     </div>
                 </div>
-                <div class="col-lg-5 d-none d-lg-block">
-                    <div class="hero-card">
-                        <div class="hero-ball">⚽</div>
-                        <div class="hero-card-bottom">
-                            <span class="eyebrow">SUA ENCICLOPÉDIA</span>
-                            <h2 class="h3 mb-1">O jogo começa aqui.</h2>
-                            <p class="mb-0 text-white-50">Informação, futebol e participação.</p>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </section>
@@ -48,20 +39,7 @@
 
         <div class="row g-4" th:if="${!jogadores.isEmpty()}">
             <div class="col-sm-6 col-lg-3" th:each="jogador : ${jogadores}">
-                <article class="card jogador-card h-100">
-                    <div class="jogador-card-top">
-                        <img th:if="${jogador.imagemUrl != null and !jogador.imagemUrl.isBlank()}" th:src="${jogador.imagemUrl}" th:alt="${jogador.nome}" class="jogador-imagem"
-                             onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
-                        <div class="jogador-inicial" th:classappend="${jogador.imagemUrl != null and !jogador.imagemUrl.isBlank()} ? ' d-none' : ''" th:text="${#strings.substring(jogador.nome, 0, 1)}">J</div>
-                        <span class="numero-camisa" th:if="${jogador.numeroCamisa != null}" th:text="${'#' + jogador.numeroCamisa}">#10</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="small text-verde fw-semibold" th:text="${jogador.selecao}">Seleção</div>
-                        <h3 class="h5 fw-bold mt-1" th:text="${jogador.nome}">Nome do jogador</h3>
-                        <p class="text-secondary small mb-3" th:text="${jogador.posicao}">Posição</p>
-                        <a class="stretched-link link-copa" th:href="@{/jogadores/{id}(id=${jogador.id})}">Ver perfil <span aria-hidden="true">→</span></a>
-                    </div>
-                </article>
+                <article th:replace="~{fragments/jogador-card :: card(${jogador})}"></article>
             </div>
         </div>
         <div class="empty-state" th:if="${jogadores.isEmpty()}">
@@ -85,6 +63,5 @@
 </main>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

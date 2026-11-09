@@ -2,7 +2,7 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/layout :: head('Jogadores')}"></head>
 <body>
-<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<nav th:replace="~{fragments/layout :: navbar('jogadores')}"></nav>
 <div th:replace="~{fragments/layout :: alerts}"></div>
 <main class="container py-5">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
@@ -20,20 +20,7 @@
     <div class="small text-secondary mb-3" th:text="${jogadores.size() + ' resultado(s)'}">10 resultados</div>
     <div class="row g-4" th:if="${!jogadores.isEmpty()}">
         <div class="col-sm-6 col-lg-3" th:each="jogador : ${jogadores}">
-            <article class="card jogador-card h-100">
-                <div class="jogador-card-top">
-                    <img th:if="${jogador.imagemUrl != null and !jogador.imagemUrl.isBlank()}" th:src="${jogador.imagemUrl}" th:alt="${jogador.nome}" class="jogador-imagem"
-                         onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
-                    <div class="jogador-inicial" th:classappend="${jogador.imagemUrl != null and !jogador.imagemUrl.isBlank()} ? ' d-none' : ''" th:text="${#strings.substring(jogador.nome, 0, 1)}">J</div>
-                    <span class="numero-camisa" th:if="${jogador.numeroCamisa != null}" th:text="${'#' + jogador.numeroCamisa}">#10</span>
-                </div>
-                <div class="card-body">
-                    <div class="small text-verde fw-semibold" th:text="${jogador.selecao}">Seleção</div>
-                    <h2 class="h5 fw-bold mt-1" th:text="${jogador.nome}">Nome do jogador</h2>
-                    <p class="text-secondary small mb-3" th:text="${jogador.posicao}">Posição</p>
-                    <a class="stretched-link link-copa" th:href="@{/jogadores/{id}(id=${jogador.id})}">Ver perfil <span aria-hidden="true">→</span></a>
-                </div>
-            </article>
+            <article th:replace="~{fragments/jogador-card :: card(${jogador})}"></article>
         </div>
     </div>
     <div class="empty-state" th:if="${jogadores.isEmpty()}">
@@ -44,6 +31,5 @@
     </div>
 </main>
 <footer th:replace="~{fragments/layout :: footer}"></footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

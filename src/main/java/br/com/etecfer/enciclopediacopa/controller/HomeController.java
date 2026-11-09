@@ -31,7 +31,6 @@ public class HomeController {
     public String listar(@RequestParam(required = false) String busca, Model model) {
         model.addAttribute("jogadores", jogadorService.buscar(busca));
         model.addAttribute("busca", busca == null ? "" : busca);
-        model.addAttribute("totalJogadores", jogadorService.contar());
         return "jogadores/lista";
     }
 

@@ -40,7 +40,7 @@ app.admin.email=admin@copa.com
 app.admin.password=admin123
 ```
 
-Altere usuario e senha para os mesmos dados utilizados no PostgreSQL da maquina. Tambem e possivel definir as variaveis de ambiente `DB_URL`, `DB_USERNAME` e `DB_PASSWORD` sem modificar o arquivo.
+Altere usuario e senha para os mesmos dados utilizados no PostgreSQL da maquina. Os campos do banco usam valores diretos, sem chaves `${...}`, para facilitar a configuracao em aula.
 
 O Hibernate cria e atualiza as tabelas automaticamente. Nao e necessario importar um arquivo `.sql`. Para funcionar com o PostgreSQL 9.5 instalado no computador da escola, as quatro entidades usam sequencias explicitas (`usuario_seq`, `jogador_seq`, `favorito_seq` e `avaliacao_seq`) em vez de colunas `GENERATED AS IDENTITY`, que nao existem nessa versao antiga.
 
@@ -121,6 +121,10 @@ src/main/resources/
 - Ao excluir um jogador pelo painel, as avaliacoes e os favoritos relacionados tambem sao excluidos.
 - A lista inicial de jogadores e inserida somente quando a tabela estiver vazia; as fotos padrao sao preenchidas em registros de exemplo que ainda estejam sem foto.
 - Uma foto local antiga e removida quando o administrador a substitui ou exclui o jogador.
+
+## Revisão final do front-end
+
+O visual foi simplificado: o CSS personalizado complementa o Bootstrap, o menu usa um acabamento escuro de vidro discreto e os cards de jogadores são reutilizados por um fragmento Thymeleaf. Os cards agora usam altura fixa para as fotos, evitando sobrepor nomes e botoes. Veja `docs/GUIA_PARA_INICIANTES.md`, `docs/REVISAO_FINAL.md` e `docs/EXPOGLASS_EFFECT.md` para detalhes e testes de entrega.
 
 ## 9. Observacao sobre o Bootstrap
 

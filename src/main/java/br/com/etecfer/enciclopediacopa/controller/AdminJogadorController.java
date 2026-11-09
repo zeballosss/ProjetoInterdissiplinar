@@ -61,9 +61,7 @@ public class AdminJogadorController {
 
         String titulo = jogador.getId() == null ? "Cadastrar jogador" : "Editar jogador";
         if (resultado.hasErrors()) {
-            model.addAttribute("titulo", titulo);
-            model.addAttribute("imagemUrlDigitada", novaImagemUrl);
-            return "admin/jogadores/formulario";
+            return exibirFormulario(model, titulo, novaImagemUrl, null);
         }
 
         Jogador jogadorOriginal = jogador.getId() == null ? null : jogadorService.buscarPorId(jogador.getId());
@@ -78,10 +76,8 @@ public class AdminJogadorController {
             } else if (novaImagemUrl != null && !novaImagemUrl.isBlank()) {
                 String url = novaImagemUrl.trim();
                 if (!url.startsWith("https://") && !url.startsWith("http://")) {
-                    model.addAttribute("titulo", titulo);
-                    model.addAttribute("erroImagem", "A URL da imagem deve começar com http:// ou https://.");
-                    model.addAttribute("imagemUrlDigitada", novaImagemUrl);
-                    return "admin/jogadores/formulario";
+                    return exibirFormulario(model, titulo, novaImagemUrl,
+                            "A URL da imagem deve começar com http:// ou https://.");
                 }
                 jogador.setImagemUrl(url);
             } else if (jogadorOriginal != null) {
@@ -97,16 +93,20 @@ public class AdminJogadorController {
             atributos.addFlashAttribute("mensagem", "Jogador salvo com sucesso.");
             return "redirect:/admin/jogadores";
         } catch (IllegalArgumentException erro) {
-            model.addAttribute("titulo", titulo);
-            model.addAttribute("erroImagem", erro.getMessage());
-            model.addAttribute("imagemUrlDigitada", novaImagemUrl);
-            return "admin/jogadores/formulario";
+            return exibirFormulario(model, titulo, novaImagemUrl, erro.getMessage());
         } catch (IOException erro) {
-            model.addAttribute("titulo", titulo);
-            model.addAttribute("erroImagem", "Não foi possível salvar a foto. Tente outro arquivo.");
-            model.addAttribute("imagemUrlDigitada", novaImagemUrl);
-            return "admin/jogadores/formulario";
+            return exibirFormulario(model, titulo, novaImagemUrl,
+                    "Não foi possível salvar a foto. Tente outro arquivo.");
         }
+    }
+
+    private String exibirFormulario(Model model, String titulo, String imagemUrl, String erro) {
+        model.addAttribute("titulo", titulo);
+        model.addAttribute("imagemUrlDigitada", imagemUrl);
+        if (erro != null) {
+            model.addAttribute("erroImagem", erro);
+        }
+        return "admin/jogadores/formulario";
     }
 
     @PostMapping("/admin/jogadores/{id}/excluir")
