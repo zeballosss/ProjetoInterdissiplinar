@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Início')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('inicio')}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+<main class="container py-4">
+    <h1>Enciclopédia da Copa</h1>
+    <p>Pesquise jogadores das Copas do Mundo e veja seus perfis.</p>
+    <form th:replace="~{fragments/layout :: busca('')}"></form>
+
+    <section class="mt-4">
+        <h2 class="h4">Jogadores em destaque</h2>
+        <p class="small text-body-secondary" th:text="${totalJogadores + ' jogadores cadastrados'}">10 jogadores cadastrados</p>
+        <div th:replace="~{fragments/jogador-card :: grade(${jogadores})}"></div>
+        <p th:if="${jogadores.isEmpty()}">Nenhum jogador cadastrado.</p>
+        <a class="btn btn-success mt-3" th:href="@{/jogadores}">Ver todos os jogadores</a>
+    </section>
+    <p class="mt-4 mb-0" sec:authorize="isAnonymous()">
+        <a class="link-success" th:href="@{/cadastro}">Crie uma conta</a> para favoritar e avaliar jogadores.
+    </p>
+    <p class="mt-4 mb-0" sec:authorize="isAuthenticated()">
+        <a class="link-success" th:href="@{/favoritos}">Ver meus favoritos</a>
+    </p>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

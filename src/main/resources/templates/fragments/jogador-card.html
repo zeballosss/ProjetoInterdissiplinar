@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="grade(jogadores)" class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
+    <div class="col" th:each="jogador : ${jogadores}">
+        <article th:replace="~{fragments/jogador-card :: card(${jogador})}"></article>
+    </div>
+</div>
+
+<article th:fragment="card(jogador)" class="card h-100 overflow-hidden" th:with="temFoto=${!#strings.isEmpty(jogador.imagemUrl)}">
+    <img th:if="${temFoto}" th:src="${jogador.imagemUrl}" th:alt="${jogador.nome}"
+         class="foto-card w-100 object-fit-cover" loading="lazy"
+         onerror="this.classList.add('d-none'); this.nextElementSibling.classList.remove('d-none');">
+    <span class="foto-card d-flex align-items-center justify-content-center bg-light fs-2"
+          th:classappend="${temFoto} ? 'd-none' : ''" th:text="${#strings.substring(jogador.nome, 0, 1)}"
+          aria-hidden="true">J</span>
+    <div class="card-body d-flex flex-column align-items-start">
+        <h2 class="h5 card-title" th:text="${jogador.nome}">Nome do jogador</h2>
+        <p class="small text-body-secondary mb-1"
+           th:text="${jogador.selecao + ' · ' + jogador.posicao}">Seleção · Posição</p>
+        <p class="small text-body-secondary mb-1" th:if="${jogador.numeroCamisa != null}"
+           th:text="${'Camisa ' + jogador.numeroCamisa}">Camisa 10</p>
+        <p class="small mb-3" th:text="${rotulosFavoritos[jogador.id] ?: '0 favoritos'}">0 favoritos</p>
+        <a class="btn btn-outline-success btn-sm mt-auto" th:href="@{/jogadores/{id}(id=${jogador.id})}"
+           th:attr="aria-label=${'Ver perfil de ' + jogador.nome}">Ver perfil</a>
+    </div>
+</article>
+</body>
+</html>

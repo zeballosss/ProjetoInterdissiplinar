@@ -1,0 +1,22 @@
+/* Vidro discreto no menu e nos botões. */
+.navbar-copa,
+.btn,
+.navbar-toggler {
+    backdrop-filter: blur(8px);
+}
+
+.navbar-copa {
+    background-color: rgba(24, 58, 45, .94);
+    border-bottom: 1px solid rgba(255, 255, 255, .2);
+}
+
+.btn-success {
+    --bs-btn-bg: rgba(25, 110, 74, .94);
+    --bs-btn-border-color: rgba(25, 110, 74, .6);
+}
+
+/* Fotos com tamanho uniforme, mesmo quando as originais têm proporções diferentes. */
+.foto-card { height: 185px; }
+.foto-perfil { height: 300px; }
+.foto-miniatura { width: 48px; height: 48px; }
+.foto-previa { width: 180px; height: 180px; }

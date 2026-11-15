@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Jogadores')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('jogadores')}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+<main class="container py-4">
+    <h1>Jogadores</h1>
+    <form th:replace="~{fragments/layout :: busca(${busca})}"></form>
+    <p class="small text-body-secondary mt-3"
+       th:text="${jogadores.size() == 1 ? '1 resultado' : jogadores.size() + ' resultados'}">10 resultados</p>
+    <div th:replace="~{fragments/jogador-card :: grade(${jogadores})}"></div>
+    <div th:if="${jogadores.isEmpty()}">
+        <p>Nenhum jogador encontrado.</p>
+        <a th:href="@{/jogadores}" class="btn btn-outline-secondary">Limpar pesquisa</a>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
